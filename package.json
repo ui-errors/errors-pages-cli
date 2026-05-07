@@ -1,0 +1,38 @@
+{
+  "name": "error-pages-cli",
+  "version": "1.0.0",
+  "description": "CLI tool to install beautiful 404 and 500 error pages into any JS framework",
+  "bin": {
+    "error-pages": "./bin/index.js"
+  },
+  "type": "commonjs",
+  "keywords": [
+    "cli",
+    "error-pages",
+    "404",
+    "500",
+    "templates",
+    "ui",
+    "nextjs",
+    "react",
+    "express"
+  ],
+  "author": "ui-errors",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ui-errors/error-pages-cli"
+  },
+  "bugs": {
+    "url": "https://github.com/ui-errors/error-pages-cli/issues"
+  },
+  "homepage": "https://github.com/ui-errors/error-pages-cli#readme",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "chalk": "^5.3.0",
+    "fs-extra": "^11.2.0"
+  }
+}
