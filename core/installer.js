@@ -1,41 +1,134 @@
-const axios = require("axios")
-const fs = require("fs-extra")
-const path = require("path")
+import axios from "axios";
+import fs from "fs-extra";
 
-const REPO =
-  "https://api.github.com/repos/ui-errors/error-pages-templates/contents"
+const BASE =
+  "https://raw.githubusercontent.com/ui-errors/error-pages-templates/main";
 
-const RAW =
-  "https://raw.githubusercontent.com/ui-errors/error-pages-templates/main"
+async function fetchRegistry(type) {
+  const { data } = await axios.get(
+    `${BASE}/registry/${type}.json`
+  );
 
-async function getTemplates() {
-  const res = await axios.get(REPO)
-  return res.data.filter(t => t.type === "dir").map(t => t.name)
+  return data;
 }
 
-function getTargetPath(framework, page) {
-  const map = {
-    next: `error-pages/${page}.js`,
-    react: `error-pages/${page}.jsx`,
-    express: `error-pages/${page}.html`,
-    vite: `error-pages/${page}.jsx`,
-    static: `error-pages/${page}.html`
+function randomTemplate(templates) {
+  return templates[
+    Math.floor(Math.random() * templates.length)
+  ];
+}
+
+async function downloadTemplate(path) {
+  const url = `${BASE}/${path}`;
+
+  const { data } = await axios.get(url);
+
+  return data;
+}
+
+async function writeFile(
+  framework,
+  type,
+  content
+) {
+  const targets = {
+    react:
+      type === "404"
+        ? "src/pages/NotFound.jsx"
+        : "src/pages/ServerError.jsx",
+
+    next:
+      type === "404"
+        ? "app/not-found.js"
+        : "app/error.js",
+
+    vue:
+      type === "404"
+        ? "src/pages/404.vue"
+        : "src/pages/500.vue",
+
+    svelte: "src/routes/+error.svelte",
+
+    express:
+      type === "404"
+        ? "views/404.ejs"
+        : "views/500.ejs",
+
+    vite:
+      type === "404"
+        ? "public/404.html"
+        : "public/500.html",
+
+    static:
+      type === "404"
+        ? "404.html"
+        : "500.html"
+  };
+
+  const target = targets[framework];
+
+  await fs.ensureDir(
+    target.split("/").slice(0, -1).join("/")
+  );
+
+  await fs.writeFile(target, content);
+
+  return target;
+}
+
+export async function install({
+  framework,
+  type,
+  templateName
+}) {
+  const registry = await fetchRegistry(type);
+
+  let template;
+
+  if (templateName === "random") {
+    template = randomTemplate(
+      registry.templates
+    );
+  } else {
+    template = registry.templates.find(
+      (t) => t.name === templateName
+    );
   }
 
-  return map[framework] || map.static
+  if (!template) {
+    throw new Error(
+      `Template "${templateName}" not found`
+    );
+  }
+
+  const frameworkData =
+    template.frameworks[framework];
+
+  if (!frameworkData) {
+    throw new Error(
+      `Framework "${framework}" unsupported`
+    );
+  }
+
+  const content =
+    await downloadTemplate(
+      frameworkData.path
+    );
+
+  const installedPath = await writeFile(
+    framework,
+    type,
+    content
+  );
+
+  return {
+    template,
+    installedPath
+  };
 }
 
-async function install(root, framework, page, template) {
-  const url = `${RAW}/${template}/${page}.html`
+export async function getTemplates(type) {
+  const registry = await fetchRegistry(type);
 
-  const res = await axios.get(url)
-
-  const target = path.join(root, getTargetPath(framework, page))
-
-  await fs.ensureDir(path.dirname(target))
-  await fs.writeFile(target, res.data)
-
-  console.log(`✔ ${page} → ${template}`)
+  return registry.templates;
 }
-
-module.exports = { getTemplates, install }
