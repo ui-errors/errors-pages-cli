@@ -1,82 +1,235 @@
-const readline = require("readline")
-const chalk = require("chalk")
+import React, {
+  useState
+} from "react";
 
-function createUI({ framework }, callback) {
-  const state = {
-    pages: { "404": false, "500": false },
-    mode: "manual",
-    index: 0
+import {
+  Box,
+  Text,
+  useInput
+} from "ink";
+
+import chalk from "chalk";
+
+import { detectFramework } from "./detect.js";
+
+import {
+  install,
+  getTemplates
+} from "./installer.js";
+
+const screens = [
+  "type",
+  "template",
+  "done"
+];
+
+export default function App() {
+  const framework =
+    detectFramework();
+
+  const [screen, setScreen] =
+    useState(0);
+
+  const [selected, setSelected] =
+    useState(0);
+
+  const [type, setType] =
+    useState("404");
+
+  const [templates, setTemplates] =
+    useState([]);
+
+  const [template, setTemplate] =
+    useState(null);
+
+  const [installedPath, setInstalledPath] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  useInput(async (_, key) => {
+    if (loading) return;
+
+    if (key.upArrow) {
+      setSelected((p) =>
+        p > 0 ? p - 1 : p
+      );
+    }
+
+    if (key.downArrow) {
+      const max =
+        screen === 0
+          ? 2
+          : templates.length - 1;
+
+      setSelected((p) =>
+        p < max ? p + 1 : p
+      );
+    }
+
+    if (key.return) {
+      if (screen === 0) {
+        const options = [
+          "404",
+          "500",
+          "random"
+        ];
+
+        const picked =
+          options[selected];
+
+        let chosenType = picked;
+
+        if (picked === "random") {
+          chosenType =
+            Math.random() > 0.5
+              ? "404"
+              : "500";
+        }
+
+        setType(chosenType);
+
+        setLoading(true);
+
+        const list =
+          await getTemplates(
+            chosenType
+          );
+
+        setTemplates([
+          ...list,
+          { name: "random" }
+        ]);
+
+        setLoading(false);
+
+        setSelected(0);
+
+        setScreen(1);
+      }
+
+      else if (screen === 1) {
+        const chosen =
+          templates[selected];
+
+        setLoading(true);
+
+        const result =
+          await install({
+            framework,
+            type,
+            templateName:
+              chosen.name
+          });
+
+        setTemplate(
+          result.template.name
+        );
+
+        setInstalledPath(
+          result.installedPath
+        );
+
+        setLoading(false);
+
+        setScreen(2);
+      }
+    }
+  });
+
+  if (loading) {
+    return (
+      <Text color="yellow">
+        Installing...
+      </Text>
+    );
   }
 
-  const pages = ["404", "500"]
+  if (screens[screen] === "done") {
+    return (
+      <Box flexDirection="column">
+        <Text color="green">
+          ✔ Installed Successfully
+        </Text>
 
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
+        <Text>
+          Framework:{" "}
+          {chalk.cyan(framework)}
+        </Text>
 
-  function render() {
-    console.clear()
+        <Text>
+          Type: {chalk.yellow(type)}
+        </Text>
 
-    console.log(chalk.cyan("UI-ERRORS INSTALLER\n"))
-    console.log("Framework:", framework)
+        <Text>
+          Template:{" "}
+          {chalk.magenta(template)}
+        </Text>
 
-    console.log("\nSelect pages:\n")
-
-    pages.forEach((p, i) => {
-      const mark = state.pages[p] ? "[x]" : "[ ]"
-      const pointer = i === state.index ? ">" : " "
-
-      console.log(pointer, mark, p)
-    })
-
-    console.log("\nMode:")
-    console.log(state.mode === "manual" ? "> manual" : "  manual")
-    console.log(state.mode === "random" ? "> random" : "  random")
-
-    console.log("\nControls:")
-    console.log("↑ ↓ move | SPACE toggle | m manual | r random | ENTER install")
+        <Text>
+          Path:{" "}
+          {chalk.green(installedPath)}
+        </Text>
+      </Box>
+    );
   }
 
-  function toggle() {
-    const p = pages[state.index]
-    state.pages[p] = !state.pages[p]
-  }
+  return (
+    <Box flexDirection="column">
+      <Text bold color="cyan">
+        UI Errors
+      </Text>
 
-  function submit() {
-    rl.close()
-    process.stdin.setRawMode(false)
+      <Text color="gray">
+        Detected: {framework}
+      </Text>
 
-    const selectedPages = pages.filter(p => state.pages[p])
+      <Box marginTop={1} flexDirection="column">
+        {screen === 0 &&
+          ["404", "500", "Random"].map(
+            (item, index) => (
+              <Text
+                key={item}
+                color={
+                  selected === index
+                    ? "green"
+                    : "white"
+                }
+              >
+                {selected === index
+                  ? "❯ "
+                  : "  "}
+                {item}
+              </Text>
+            )
+          )}
 
-    callback({
-      pages: selectedPages,
-      mode: state.mode
-    })
-  }
+        {screen === 1 &&
+          templates.map(
+            (item, index) => (
+              <Text
+                key={item.name}
+                color={
+                  selected === index
+                    ? "green"
+                    : "white"
+                }
+              >
+                {selected === index
+                  ? "❯ "
+                  : "  "}
+                {item.name}
+              </Text>
+            )
+          )}
+      </Box>
 
-  process.stdin.setRawMode(true)
-  process.stdin.resume()
-
-  process.stdin.on("data", (key) => {
-    const k = key.toString()
-
-    if (k === "\u0003") process.exit()
-
-    if (k === "\r") return submit()
-
-    if (k === "\u001b[A") state.index = Math.max(0, state.index - 1)
-    if (k === "\u001b[B") state.index = Math.min(1, state.index + 1)
-
-    if (k === " ") toggle()
-
-    if (k === "m") state.mode = "manual"
-    if (k === "r") state.mode = "random"
-
-    render()
-  })
-
-  render()
+      <Box marginTop={1}>
+        <Text color="gray">
+          ↑ ↓ navigate • enter select
+        </Text>
+      </Box>
+    </Box>
+  );
 }
-
-module.exports = { createUI }
