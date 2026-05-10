@@ -5,13 +5,13 @@ Beautiful error pages installer.
 ## Install
 
 ```bash
-npm install -g ui-errors
+npm install -g errorlab
 ```
 
 or
 
 ```bash
-npx ui-errors
+npx errorlab
 ```
 
 ---
@@ -35,7 +35,7 @@ npx ui-errors
 # Usage
 
 ```bash
-ui-errors
+errorlab
 ```
 
 ---

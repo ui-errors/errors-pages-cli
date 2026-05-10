@@ -4,4 +4,4 @@ import React from "react";
 import { render } from "ink";
 import App from "../core/tui.js";
 
-render(<App />);
+render(React.createElement(App));

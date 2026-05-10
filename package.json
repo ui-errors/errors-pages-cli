@@ -1,11 +1,17 @@
 {
-  "name": "error-pages-cli",
+  "name": "errorlab",
   "version": "1.0.0",
   "description": "CLI tool to install beautiful 404 and 500 error pages into any JS framework",
-  "bin": {
-    "error-pages": "./bin/index.js"
-  },
   "type": "module",
+  "main": "./bin/index.js",
+  "bin": {
+    "errorlab": "bin/index.js"
+  },
+  "files": [
+    "bin",
+    "core",
+    "README.md"
+  ],
   "keywords": [
     "cli",
     "error-pages",
@@ -19,14 +25,21 @@
     "tui",
     "ink"
   ],
-  "author": "ui-errors",
+  "author": {
+    "name": "Morgan Miller",
+    "email": "hr@stackverify.site",
+    "url": "https://libhub.stackverify.site/shop"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=16"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ui-errors/error-pages-cli"
+    "url": "git+https://github.com/ui-errors/error-pages-cli.git"
   },
   "bugs": {
     "url": "https://github.com/ui-errors/error-pages-cli/issues"
@@ -37,6 +50,8 @@
     "chalk": "^5.3.0",
     "fs-extra": "^11.2.0",
     "ink": "^5.2.1",
+    "ink-gradient": "^3.0.0",
+    "ink-spinner": "^5.0.0",
     "react": "^18.2.0"
   }
 }

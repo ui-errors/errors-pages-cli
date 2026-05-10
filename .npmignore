@@ -1,0 +1,16 @@
+# Ignore development configurations
+.gitignore
+.npmignore
+.github/
+
+# Ignore documentation that isn't the README
+docs/
+*.png
+*.jpg
+
+# Ignore local testing scripts
+tests/
+test-output/
+
+# Ignore project metadata
+package-lock.json
