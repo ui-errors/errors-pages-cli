@@ -1,30 +1,91 @@
 import fs from "fs";
 import path from "path";
 
-export function detectFramework() {
-  const pkgPath = path.join(
-    process.cwd(),
-    "package.json"
-  );
+function exists(p) {
+  return fs.existsSync(path.join(process.cwd(), p));
+}
+
+export function detectProject() {
+  const pkgPath = path.join(process.cwd(), "package.json");
 
   if (!fs.existsSync(pkgPath)) {
-    return "static";
+    return {
+      framework: "static",
+      structure: null,
+    };
   }
 
-  const pkg = JSON.parse(
-    fs.readFileSync(pkgPath, "utf-8")
-  );
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
 
   const deps = {
     ...pkg.dependencies,
-    ...pkg.devDependencies
+    ...pkg.devDependencies,
   };
 
-  if (deps.next) return "next";
-  if (deps.react) return "react";
-  if (deps.vue) return "vue";
-  if (deps.svelte) return "svelte";
-  if (deps.express) return "express";
+  let framework = "static";
 
-  return "static";
+  // -------------------------
+  // FRAMEWORK DETECTION
+  // -------------------------
+  if (deps.next) framework = "next";
+  else if (deps.react) framework = "react";
+  else if (deps.vue) framework = "vue";
+  else if (deps.svelte) framework = "svelte";
+  else if (deps.express) framework = "express";
+  else if (deps.vite) framework = "vite";
+
+  // -------------------------
+  // STRUCTURE DETECTION
+  // -------------------------
+  let structure = null;
+
+  // NEXT.JS
+  if (framework === "next") {
+    if (exists("src/app")) structure = "src-app";
+    else if (exists("app")) structure = "app";
+    else if (exists("src/pages")) structure = "src-pages";
+    else if (exists("pages")) structure = "pages";
+    else structure = "unknown";
+  }
+
+  // REACT
+  if (framework === "react") {
+    if (exists("src/pages")) structure = "src-pages";
+    else if (exists("src")) structure = "src";
+    else structure = "flat";
+  }
+
+  // VUE
+  if (framework === "vue") {
+    if (exists("src/views")) structure = "views";
+    else if (exists("src/pages")) structure = "pages";
+    else structure = "flat";
+  }
+
+  // SVELTE
+  if (framework === "svelte") {
+    if (exists("src/routes")) structure = "routes";
+    else structure = "flat";
+  }
+
+  // EXPRESS
+  if (framework === "express") {
+    if (exists("views")) structure = "views";
+    else if (exists("src/views")) structure = "src-views";
+    else structure = "flat";
+  }
+
+  // VITE
+  if (framework === "vite") {
+    if (exists("src")) structure = "src";
+    else structure = "flat";
+  }
+
+  // STATIC fallback
+  if (!structure) structure = "flat";
+
+  return {
+    framework,
+    structure,
+  };
 }
