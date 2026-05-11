@@ -1,6 +1,7 @@
 import axios from "axios";
 import fs from "fs-extra";
 import path from "path";
+import { detectProject } from "./detect.js";
 
 const BASE =
   "https://raw.githubusercontent.com/ui-errors/error-pages-templates/main";
@@ -24,37 +25,79 @@ function randomTemplate(templates) {
  * Downloads a template file content
  */
 async function downloadTemplate(filePath) {
-  const url = `${BASE}/${filePath}`;
-  const { data } = await axios.get(url);
+  const { data } = await axios.get(`${BASE}/${filePath}`);
   return data;
 }
 
 /**
- * Writes the template content to the proper file path
- * Handles cross-platform paths (Windows/Linux/macOS)
+ * Resolves correct file path based on framework + project structure
  */
-async function writeFile(framework, type, content) {
-  const targets = {
-    react: type === "404" ? "src/pages/NotFound.jsx" : "src/pages/ServerError.jsx",
-    next: type === "404" ? "app/not-found.js" : "app/error.js",
-    vue: type === "404" ? "src/pages/404.vue" : "src/pages/500.vue",
-    svelte: "src/routes/+error.svelte",
-    express: type === "404" ? "views/404.ejs" : "views/500.ejs",
-    vite: type === "404" ? "public/404.html" : "public/500.html",
-    static: type === "404" ? "404.html" : "500.html",
-  };
+function resolveTarget(framework, structure, type) {
+  if (framework === "next") {
+    if (structure === "src-app") {
+      return type === "404"
+        ? "src/app/not-found.js"
+        : "src/app/error.js";
+    }
 
-  const target = targets[framework];
+    if (structure === "app") {
+      return type === "404"
+        ? "app/not-found.js"
+        : "app/error.js";
+    }
 
-  if (!target) {
-    throw new Error(`Invalid framework or type: ${framework}, ${type}`);
+    if (structure === "src-pages") {
+      return type === "404"
+        ? "src/pages/404.js"
+        : "src/pages/500.js";
+    }
+
+    if (structure === "pages") {
+      return type === "404"
+        ? "pages/404.js"
+        : "pages/500.js";
+    }
   }
 
-  // Use Node.js path utilities
+  if (framework === "react") {
+    return type === "404"
+      ? "src/pages/NotFound.jsx"
+      : "src/pages/ServerError.jsx";
+  }
+
+  if (framework === "vue") {
+    return type === "404"
+      ? "src/pages/404.vue"
+      : "src/pages/500.vue";
+  }
+
+  if (framework === "svelte") {
+    return "src/routes/+error.svelte";
+  }
+
+  if (framework === "express") {
+    return type === "404"
+      ? "views/404.ejs"
+      : "views/500.ejs";
+  }
+
+  if (framework === "vite") {
+    return type === "404"
+      ? "public/404.html"
+      : "public/500.html";
+  }
+
+  return type === "404" ? "404.html" : "500.html";
+}
+
+/**
+ * Writes file safely
+ */
+async function writeFile(target, content) {
   const dir = path.dirname(target);
 
   if (dir && dir !== ".") {
-    await fs.ensureDir(dir); // safely create directories
+    await fs.ensureDir(dir);
   }
 
   await fs.writeFile(target, content);
@@ -66,9 +109,12 @@ async function writeFile(framework, type, content) {
  * Installs a template for a specific framework and type (404/500)
  */
 export async function install({ framework, type, templateName }) {
+  const { structure } = detectProject();
+
   const registry = await fetchRegistry(type);
 
   let template;
+
   if (templateName === "random") {
     template = randomTemplate(registry.templates);
   } else {
@@ -80,16 +126,22 @@ export async function install({ framework, type, templateName }) {
   }
 
   const frameworkData = template.frameworks[framework];
+
   if (!frameworkData) {
     throw new Error(`Framework "${framework}" unsupported`);
   }
 
   const content = await downloadTemplate(frameworkData.path);
-  const installedPath = await writeFile(framework, type, content);
+
+  const target = resolveTarget(framework, structure, type);
+
+  const installedPath = await writeFile(target, content);
 
   return {
     template,
     installedPath,
+    framework,
+    structure,
   };
 }
 
