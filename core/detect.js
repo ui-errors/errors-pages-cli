@@ -5,6 +5,9 @@ function exists(p) {
   return fs.existsSync(path.join(process.cwd(), p));
 }
 
+/**
+ * Main project detection (existing function)
+ */
 export function detectProject() {
   const pkgPath = path.join(process.cwd(), "package.json");
 
@@ -39,7 +42,6 @@ export function detectProject() {
   // -------------------------
   let structure = null;
 
-  // NEXT.JS
   if (framework === "next") {
     if (exists("src/app")) structure = "src-app";
     else if (exists("app")) structure = "app";
@@ -48,44 +50,46 @@ export function detectProject() {
     else structure = "unknown";
   }
 
-  // REACT
   if (framework === "react") {
     if (exists("src/pages")) structure = "src-pages";
     else if (exists("src")) structure = "src";
     else structure = "flat";
   }
 
-  // VUE
   if (framework === "vue") {
     if (exists("src/views")) structure = "views";
     else if (exists("src/pages")) structure = "pages";
     else structure = "flat";
   }
 
-  // SVELTE
   if (framework === "svelte") {
     if (exists("src/routes")) structure = "routes";
     else structure = "flat";
   }
 
-  // EXPRESS
   if (framework === "express") {
     if (exists("views")) structure = "views";
     else if (exists("src/views")) structure = "src-views";
     else structure = "flat";
   }
 
-  // VITE
   if (framework === "vite") {
     if (exists("src")) structure = "src";
     else structure = "flat";
   }
 
-  // STATIC fallback
   if (!structure) structure = "flat";
 
   return {
     framework,
     structure,
   };
+}
+
+/**
+ * Compatibility alias for older imports:
+ * import { detectFramework }
+ */
+export function detectFramework() {
+  return detectProject().framework;
 }
