@@ -7,7 +7,7 @@ import { detectProject } from "./detect.js";
 import { install, getTemplates } from "./installer.js";
 
 export default function App() {
-  // upgraded API (framework + structure available)
+  //  upgraded API (framework + structure available)
   const project = detectProject();
   const framework = project?.framework || "static";
 
@@ -285,3 +285,4 @@ export default function App() {
       )
     )
   );
+}
