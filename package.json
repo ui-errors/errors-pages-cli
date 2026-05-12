@@ -1,6 +1,6 @@
 {
   "name": "errorlab",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CLI tool to install beautiful 404 and 500 error pages into any JS framework",
   "type": "module",
   "main": "./bin/index.js",
