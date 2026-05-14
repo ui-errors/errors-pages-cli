@@ -32,7 +32,7 @@ export default function InitApp() {
       }
     };
 
-    const filePath = path.join(process.cwd(), "errorlab.json");
+    const filePath = path.join(process.cwd(), "template.json");
 
     await fs.writeJson(filePath, config, {
       spaces: 2
