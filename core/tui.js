@@ -104,16 +104,16 @@ export default function App() {
   });
 
   // -------------------------
-  // ASCII LOGO UI
+  // CENTERED ASCII LOGO UI (With Prakrit Concept)
   // -------------------------
   const renderLogo = () => {
-    const frame = chalk.dim;
-    const glitch = chalk.green.bold;
-    const label = chalk.white;
+    const frame = chalk.cyan;
+    const glitch = chalk.magenta.bold;
+    const label = chalk.yellow.bold;
 
     return React.createElement(
       Box,
-      { flexDirection: "column", marginBottom: 1 },
+      { flexDirection: "column", alignItems: "center", marginBottom: 2, marginTop: 1 },
       React.createElement(Text, null, frame("       ____________________")),
       React.createElement(Text, null, frame("      |   ______  ______   |")),
       React.createElement(Text, null, frame("      |  |      ||      |  |")),
@@ -125,8 +125,8 @@ export default function App() {
       React.createElement(Text, null, frame("      |  |     | ||  ____  |")),
       React.createElement(Text, null, frame("      |  |____/  || |    | |")),
       React.createElement(Text, null, frame("      |__________||_|____|_|")),
-      React.createElement(Box, { marginTop: 1, paddingLeft: 11 }, 
-        React.createElement(Text, null, label("u i - e r r o r s"))
+      React.createElement(Box, { marginTop: 1 }, 
+        React.createElement(Text, null, label("u i  -  e r r o r s"))
       )
     );
   };
@@ -138,18 +138,18 @@ export default function App() {
     React.createElement(
       Box,
       {
-        borderStyle: "single",
-        borderColor: "white",
+        borderStyle: "round",
+        borderColor: "cyan",
         paddingX: 1,
         marginBottom: 1,
       },
-      React.createElement(Text, { bold: true, color: "blue" }, " SYSTEM "),
-      React.createElement(Text, { color: "white" }, " :: UI-ERRORS"),
+      React.createElement(Text, { bold: true, color: "black", backgroundColor: "cyan" }, " SYSTEM "),
+      React.createElement(Text, { color: "white", bold: true }, " :: UI-OS"),
       React.createElement(Spacer),
       React.createElement(
         Text,
-        { color: "gray" },
-        `ENV: ${framework.toUpperCase()}`
+        { color: "magenta", bold: true },
+        `ENV // ${framework.toUpperCase()}`
       )
     );
 
@@ -157,7 +157,7 @@ export default function App() {
   // PROGRESS BAR UI
   // -------------------------
   const createProgressBar = (pct) => {
-    const width = 20;
+    const width = 24;
     const filled = Math.floor((pct / 100) * width);
 
     return React.createElement(
@@ -166,9 +166,9 @@ export default function App() {
       React.createElement(
         Box,
         null,
-        React.createElement(Text, { color: "blue" }, "█".repeat(filled)),
+        React.createElement(Text, { color: "magenta" }, "█".repeat(filled)),
         React.createElement(Text, { color: "gray" }, "░".repeat(width - filled)),
-        React.createElement(Text, null, ` ${pct}%`)
+        React.createElement(Text, { color: "cyan", bold: true }, ` ${pct}%`)
       )
     );
   };
@@ -186,15 +186,16 @@ export default function App() {
         {
           flexDirection: "column",
           alignItems: "center",
-          borderStyle: "round",
+          borderStyle: "double",
+          borderColor: "yellow",
           padding: 1,
-          width: 50,
+          width: 54,
         },
         React.createElement(
           Text,
-          null,
-          React.createElement(Spinner, { type: "dots" }),
-          " DEPLOYING ASSETS..."
+          { color: "yellow", bold: true },
+          React.createElement(Spinner, { type: "earth" }),
+          " TRANSMUTING ARCHITECTURAL FRAGMENTS..."
         ),
         createProgressBar(progress)
       )
@@ -212,22 +213,24 @@ export default function App() {
       React.createElement(
         Box,
         {
-          borderStyle: "double",
+          borderStyle: "round",
           borderColor: "green",
           paddingX: 2,
+          paddingY: 1,
           flexDirection: "column",
+          width: 54,
         },
         React.createElement(
           Text,
-          { color: "green", bold: true },
-          "COMPLETED SUCCESSFULLY"
+          { color: "black", backgroundColor: "green", bold: true },
+          " FRACTURE ALIGNED SUCCESSFULLY "
         ),
         React.createElement(
           Box,
           { marginTop: 1, flexDirection: "column" },
-          React.createElement(Text, null, `TYPE:     ${type}`),
-          React.createElement(Text, null, `TEMPLATE: ${template}`),
-          React.createElement(Text, null, `PATH:     ${installedPath}`)
+          React.createElement(Text, null, `${chalk.cyan("MANIFEST:")}   ${type}`),
+          React.createElement(Text, null, `${chalk.cyan("ELEMENT:")}    ${template}`),
+          React.createElement(Text, null, `${chalk.cyan("ANCHOR:")}     ${installedPath}`)
         )
       )
     );
@@ -249,39 +252,39 @@ export default function App() {
 
     React.createElement(
       Box,
-      null,
+      { marginBottom: 1 },
 
       // Sidebar
       React.createElement(
         Box,
         {
           flexDirection: "column",
-          width: 15,
+          width: 16,
           borderStyle: "single",
-          borderColor: "gray",
+          borderColor: "magenta",
           paddingX: 1,
         },
-        React.createElement(Text, { bold: true, color: "gray" }, "STEPS"),
+        React.createElement(Text, { bold: true, color: "magenta" }, "PATHWAY"),
         React.createElement(
           Text,
-          { color: screen === 0 ? "white" : "gray" },
-          screen === 0 ? "> TYPE" : "  TYPE"
+          { color: screen === 0 ? "yellow" : "gray", bold: screen === 0 },
+          screen === 0 ? "● TYPE" : "  TYPE"
         ),
         React.createElement(
           Text,
-          { color: screen === 1 ? "white" : "gray" },
-          screen === 1 ? "> DESIGN" : "  DESIGN"
+          { color: screen === 1 ? "yellow" : "gray", bold: screen === 1 },
+          screen === 1 ? "● DESIGN" : "  DESIGN"
         )
       ),
 
       // Content
       React.createElement(
         Box,
-        { flexDirection: "column", paddingX: 2 },
+        { flexDirection: "column", paddingX: 3 },
         React.createElement(
           Text,
-          { bold: true, underline: true },
-          screen === 0 ? "SELECT CATEGORY" : "SELECT TEMPLATE"
+          { color: "cyan", bold: true },
+          screen === 0 ? "» IDENTIFY CRITERIA" : "» SELECT GEOMETRY"
         ),
 
         React.createElement(
@@ -295,23 +298,34 @@ export default function App() {
               Text,
               {
                 key: label,
-                color: isSelected ? "white" : "gray",
-                backgroundColor: isSelected ? "blue" : undefined,
+                color: isSelected ? "black" : "white",
+                backgroundColor: isSelected ? "yellow" : undefined,
+                bold: isSelected,
               },
-              isSelected ? ` ${label.toUpperCase()} ` : `  ${label.toUpperCase()} `
+              isSelected ? ` ▶ ${label.toUpperCase()} ` : `   ${label.toUpperCase()} `
             );
           })
         )
       )
     ),
 
+    // Footer & Philosophical Assertion Bar
     React.createElement(
       Box,
-      { marginTop: 1 },
+      { flexDirection: "column", marginTop: 1 },
+      React.createElement(
+        Box,
+        { borderStyle: "classic", borderColor: "gray", paddingX: 1, marginBottom: 1 },
+        React.createElement(
+          Text,
+          { color: "gray", italic: true },
+          "Ūi: The primal exclamation upon discovering a structural divergence."
+        )
+      ),
       React.createElement(
         Text,
-        { color: "gray" },
-        "USE ARROWS TO NAVIGATE • ENTER TO CONFIRM"
+        { color: "cyan" },
+        "▲ NAV: ARROW KEYS • CONFIRM: ENTER"
       )
     )
   );
