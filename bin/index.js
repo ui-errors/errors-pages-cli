@@ -6,7 +6,7 @@ import path from "path";
 import fs from "fs-extra";
 import process from "process";
 import App from "../core/tui.js";
-import InitApp from "../core/init.js";
+//import InitApp from "../core/init.js";
 
 const command = process.argv[2];
 
