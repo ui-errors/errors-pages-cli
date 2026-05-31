@@ -104,6 +104,34 @@ export default function App() {
   });
 
   // -------------------------
+  // ASCII LOGO UI
+  // -------------------------
+  const renderLogo = () => {
+    const frame = chalk.dim;
+    const glitch = chalk.green.bold;
+    const label = chalk.white;
+
+    return React.createElement(
+      Box,
+      { flexDirection: "column", marginBottom: 1 },
+      React.createElement(Text, null, frame("       ____________________")),
+      React.createElement(Text, null, frame("      |   ______  ______   |")),
+      React.createElement(Text, null, frame("      |  |      ||      |  |")),
+      React.createElement(Text, null, frame("      |  |  __  ||  __  |  |")),
+      React.createElement(Text, null, frame("      |  | |  | || |  | |  |")),
+      React.createElement(Text, null, glitch("======|==|_|==|_||_|==|_|==|======")),
+      React.createElement(Text, null, frame("      |   ____   ||____/   |")),
+      React.createElement(Text, null, frame("      |  |    \\  ||        |")),
+      React.createElement(Text, null, frame("      |  |     | ||  ____  |")),
+      React.createElement(Text, null, frame("      |  |____/  || |    | |")),
+      React.createElement(Text, null, frame("      |__________||_|____|_|")),
+      React.createElement(Box, { marginTop: 1, paddingLeft: 11 }, 
+        React.createElement(Text, null, label("u i - e r r o r s"))
+      )
+    );
+  };
+
+  // -------------------------
   // HEADER UI
   // -------------------------
   const createHeader = () =>
@@ -216,6 +244,8 @@ export default function App() {
     { flexDirection: "column", padding: 1 },
 
     createHeader(),
+    
+    renderLogo(),
 
     React.createElement(
       Box,
