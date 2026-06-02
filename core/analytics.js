@@ -3,7 +3,7 @@ import axios from "axios";
 /**
  * Vercel analytics endpoint
  */
-const ANALYTICS_URL = "https://ui-errors.vercel.app/install";
+const ANALYTICS_URL = "https://ui-errors.vercel.app/api/install";
 
 /**
  * Sends install usage stats (anonymous)
