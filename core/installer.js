@@ -2,7 +2,7 @@ import axios from "axios";
 import fs from "fs-extra";
 import path from "path";
 import { detectProject } from "./detect.js";
-import { trackInstall } from "./analytics.js"; // aDDED LINE
+import { trackInstall } from "./analytics.js"; // usage stats
 
 const BASE =
   "https://raw.githubusercontent.com/ui-errors/error-pages-templates/main";
