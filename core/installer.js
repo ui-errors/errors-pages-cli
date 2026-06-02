@@ -2,6 +2,7 @@ import axios from "axios";
 import fs from "fs-extra";
 import path from "path";
 import { detectProject } from "./detect.js";
+import { trackInstall } from "./analytics.js"; // aDDED LINE
 
 const BASE =
   "https://raw.githubusercontent.com/ui-errors/error-pages-templates/main";
@@ -136,6 +137,13 @@ export async function install({ framework, type, templateName }) {
   const target = resolveTarget(framework, structure, type);
 
   const installedPath = await writeFile(target, content);
+
+  //  ADDED (safe analytics hook, does NOT affect install)
+  trackInstall({
+    template: template.name,
+    framework,
+    type
+  }).catch(() => {});
 
   return {
     template,
