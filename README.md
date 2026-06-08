@@ -1,3 +1,11 @@
+<p align="center">
+  <img
+    src="https://i.ibb.co/LdCYFgKZ/Screenshot-20260607-010045.jpg"
+    alt="UI Errors Banner"
+    width="100%"
+  />
+</p>
+
 # UI Errors
 
 Beautiful error pages installer.
