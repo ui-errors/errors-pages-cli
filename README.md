@@ -4,9 +4,9 @@ Beautiful error pages installer.
 
 ![npm version](https://img.shields.io/npm/v/errorlab)
 ![npm downloads](https://img.shields.io/npm/dm/errorlab)
-![license](https://img.shields.io/github/license/ui-errors/errorlab)
-![stars](https://img.shields.io/github/stars/ui-errors/errorlab)
-![issues](https://img.shields.io/github/issues/ui-errors/errorlab)
+![license](https://img.shields.io/github/license/ui-errors/error-pages-templates)
+![stars](https://img.shields.io/github/stars/ui-errors/errors-pages-cli)
+![issues](https://img.shields.io/github/issues/ui-errors/errors-pages-cli)
 ![Node.js](https://img.shields.io/badge/node-%3E%3D18-green)
 ![CLI](https://img.shields.io/badge/CLI-Interactive-blue)
 ![Templates](https://img.shields.io/badge/Templates-Community-orange)
